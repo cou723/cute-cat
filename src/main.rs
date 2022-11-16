@@ -1,4 +1,5 @@
 use std::env;
+use unicode_width::UnicodeWidthStr;
 
 const CAT_SUCCESS: &str = r"(=^･ω ･^=)";
 const CAT_FAILED: &str = r"(=^･ｪ･^=)";
@@ -18,7 +19,11 @@ fn main() {
             return;
         }
     }
-    let file_width = file_text.lines().map(|line| line.len()).max().unwrap();
+    let file_width = file_text
+        .lines()
+        .map(|line| UnicodeWidthStr::width(line))
+        .max()
+        .unwrap();
 
     print_cat(&file_text, file_width);
 }
@@ -27,7 +32,7 @@ fn print_cat(file_text: &str, file_width: usize) {
     print_horizontal_bar(file_width);
     for line in file_text.lines() {
         print!("|   {}", line);
-        for _ in 0..(file_width - line.len()) {
+        for _ in 0..(file_width - UnicodeWidthStr::width(line)) {
             print!(" ");
         }
         println!("    |");
